@@ -1,6 +1,3 @@
-# ID: 3224653689
-# MAIL: adam.sinale@gmail.com
-
 CC=g++
 FLAGS=-std=c++11 -Werror -Wsign-conversion
 
