@@ -4,6 +4,8 @@ FLAGS=-std=c++11 -Werror -Wsign-conversion
 CPPs=Graph.cpp Algorithms.cpp TestCounter.cpp Test.cpp
 OBJECTS=$(subst .cpp,.o,$(CPPs))
 
+all: demo test
+
 run: test
 	./$^
 
