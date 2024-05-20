@@ -1,4 +1,5 @@
 #include "Algorithms.hpp"
+#define NO_PARENT (unsigned int)-1
 
 using namespace std;
 
@@ -107,7 +108,7 @@ int Algorithms::isStronglyConnected(Graph &graph){
 /*
 @return print the cycle if there is one, otherwise return 0.
 */
-int Algorithms::isContainsCycle(Graph &graph){
+string Algorithms::isContainsCycle(Graph &graph){
     if (graph.isDirectedGraph()){
         return isContainsCycleDirected(graph);
     }
@@ -119,28 +120,28 @@ int Algorithms::isContainsCycle(Graph &graph){
 /*
 Check if the DIRECTED graph contains a cycle.
 */
-int Algorithms::isContainsCycleDirected(Graph &graph){
-    int numVertices = graph.getNumVertices();
+string Algorithms::isContainsCycleDirected(Graph &graph){
+    unsigned int numVertices = graph.getNumVertices();
     vector<int> color(numVertices, 0); // 0 - white, 1 - gray, 2 - black
-    vector<unsigned int> pi(numVertices, NULL);
+    vector<unsigned int> pi(numVertices, NO_PARENT);
     stack<unsigned int> path;
 
     for (unsigned int i = 0; i < numVertices; i++){
         if (color[i] == 0){
             if (DFSVisit(graph, i, color, pi, path) == 1){
-                cout << "The cycle is: ";
+                string result;
                 while (!path.empty()){
-                    cout << path.top() << " ";
+                    result += to_string(path.top());
                     path.pop();
                     if (!path.empty()){
-                        cout << "-> ";
+                        result += "->";
                     }
                 }
-                return 1;
+                return result;
             }
         }
     }
-    return 0;
+    return "0";
 
 }
 /*
@@ -173,28 +174,28 @@ int Algorithms::DFSVisit(Graph &graph, unsigned int u, vector<int>& color, vecto
 /*
 Check if the UNDIRECTED graph contains a cycle.
 */
-int Algorithms::isContainsCycleUndirected(Graph &graph){
+string Algorithms::isContainsCycleUndirected(Graph &graph){
     unsigned int numVertices = graph.getNumVertices();
     vector<int> color(numVertices, 0); // 0 - white, 1 - gray, 2 - black
-    vector<unsigned int> pi(numVertices, NULL);
+    vector<unsigned int> pi(numVertices, NO_PARENT);
     stack<unsigned int> path;
 
     for (unsigned int i = 0; i < numVertices; i++){
         if (color[i] == 0){
             if (DFSVisitUndirected(graph, i, color, pi, path) == 1){
-                cout << "The cycle is: ";
+                string result;
                 while (!path.empty()){
-                    cout << path.top() << " ";
+                    result += to_string(path.top());
                     path.pop();
                     if (!path.empty()){
-                        cout << "-> ";
+                        result += "->";
                     }
                 }
-                return 1;
+                return result;
             }
         }
     }
-    return 0;
+    return "0";
 }
 
 /*
@@ -231,7 +232,7 @@ For a weighted graph with negative weights, use Bellman-Ford algorithm.
 If there is a negative cycle or there is no path return -1.
 */
 
-int Algorithms::shortestPath(Graph &graph, unsigned int start, unsigned int end){
+string Algorithms::shortestPath(Graph &graph, unsigned int start, unsigned int end){
     if (graph.isWeightedGraph()){
         if (graph.isPositiveWeightedGraph()){
             return Dijkstra(graph, start, end);     // Dijkstra's algorithm for positive weights
@@ -245,16 +246,16 @@ int Algorithms::shortestPath(Graph &graph, unsigned int start, unsigned int end)
     }
 }
 
-int Algorithms::BFS(Graph &graph, unsigned int start, unsigned int end){
+string Algorithms::BFS(Graph &graph, unsigned int start, unsigned int end){
     unsigned int numVertices = graph.getNumVertices();
     vector<int> color(numVertices, 0); // 0 - white, 1 - gray, 2 - black
     vector<int> d(numVertices, INT_MAX);
-    vector<unsigned int> pi(numVertices, NULL);
+    vector<unsigned int> pi(numVertices, NO_PARENT);
     stack<unsigned int> path;
 
     color[start] = 1;
     d[start] = 0;
-    pi[start] = NULL;
+    pi[start] = NO_PARENT;
 
     queue<unsigned int> q;
     q.push(start);
@@ -271,32 +272,34 @@ int Algorithms::BFS(Graph &graph, unsigned int start, unsigned int end){
         }
         color[u] = 2;
     }
-    if (d[end] == -1){
-        return -1;
+    if (d[end] == INT_MAX){
+        return "-1";
     }
     unsigned int i = end;
-    while (i != NULL){
+    while (i != (unsigned int)-1){    // father is not null
         path.push(i);
         i = pi[i];
     }
+    string result;
     while (!path.empty()){
-        cout << path.top() << " ";
+        result += to_string(path.top());
         path.pop();
         if (!path.empty()){
-            cout << "-> ";
+            result += "->";
         }
     }
+    return result;
 }
 
-int Algorithms::Dijkstra(Graph &graph, unsigned int start, unsigned int end){
+string Algorithms::Dijkstra(Graph &graph, unsigned int start, unsigned int end){
     unsigned int numVertices = graph.getNumVertices();
     vector<int> d(numVertices, INT_MAX);
-    vector<unsigned int> pi(numVertices, NULL);
+    vector<unsigned int> pi(numVertices, NO_PARENT);
     vector<bool> visited(numVertices, false);
     
     d[start] = 0;
     for (unsigned int i = 0; i < numVertices; i++){
-        int u = minDistance(d, visited);
+        unsigned int u = minDistance(d, visited);
         visited[u] = true;
 
         // Relaxation
@@ -308,31 +311,36 @@ int Algorithms::Dijkstra(Graph &graph, unsigned int start, unsigned int end){
             }
         }
     }
+    if (d[end] == INT_MAX){
+        return "-1";
+    }
 
     unsigned int i = end;
     stack<unsigned int> path;
-    while (i != NULL){
+    while (i != (unsigned int)-1){
         path.push(i);
         i = pi[i];
     }
+    string result;
     while (!path.empty()){
-        cout << path.top() << " ";
+        result += to_string(path.top());
         path.pop();
         if (!path.empty()){
-            cout << "-> ";
+            result += "->";
         }
     }
+    return result;
 }
 
-int Algorithms::BellmanFord(Graph &graph, unsigned int start, unsigned int end){
-    int numVertices = graph.getNumVertices();
+string Algorithms::BellmanFord(Graph &graph, unsigned int start, unsigned int end){
+    unsigned int numVertices = graph.getNumVertices();
     vector<int> d(numVertices, INT_MAX);
-    vector<unsigned int> pi(numVertices, NULL);
+    vector<unsigned int> pi(numVertices, NO_PARENT);
     d[start] = 0;
 
     // Relaxation
-    for (unsigned int i = 0; i < numVertices - 1; i++){  // (n - 1) iterations
-        for (unsigned int u = 0; u < numVertices; u++){
+    for (unsigned int i = 0; i < numVertices - (unsigned int) 1; i++){  // (n - 1) iterations
+        for (unsigned int u = 0; u < (unsigned int)numVertices; u++){
             for (unsigned int v : graph.getNeighbors(u)){
                 int disFromUtoV = graph.getAdjacencyMatrix()[u][v];
                 if (d[u] + disFromUtoV < d[v]){
@@ -344,36 +352,42 @@ int Algorithms::BellmanFord(Graph &graph, unsigned int start, unsigned int end){
     }
 
     // Check for negative cycle
-    for (unsigned int u = 0; u < numVertices; u++){  // last iteration
+    for (unsigned int u = 0; u < (unsigned int)numVertices; u++){  // last iteration
         for (unsigned int v : graph.getNeighbors(u)){
             int disFromUtoV = graph.getAdjacencyMatrix()[u][v];
             if (d[u] + disFromUtoV < d[v]){
-                return -1; // There is a negative cycle
+                return "-1"; // There is a negative cycle
             }
         }
+    }
+    if(d[end] == INT_MAX){
+        return "-1";
     }
 
     unsigned int i = end;
     stack<unsigned int> path;
-    while (i != NULL){
+    while (i != (unsigned int)-1){
         path.push(i);
         i = pi[i];
     }
+    string result;
     while (!path.empty()){
-        cout << path.top() << " ";
+         result += to_string(path.top());
         path.pop();
         if (!path.empty()){
-            cout << "-> ";
+           result += "->";
         }
     }
+    return result;
 }
 
 /*
 A utility function to find the vertex with minimum distance value,
  from the set of vertices not yet included in shortest path
 */
-int Algorithms::minDistance(vector<int> d, vector<bool> visited){
-    int min = INT_MAX, minIndex;
+unsigned int Algorithms::minDistance(vector<int> d, vector<bool> visited){
+    int min = INT_MAX;
+    unsigned int minIndex;
     for (unsigned int i = 0; i < d.size(); i++){
         if (!visited[i] && d[i] <= min){
             min = d[i];
@@ -383,33 +397,6 @@ int Algorithms::minDistance(vector<int> d, vector<bool> visited){
     return minIndex;
 }
 
-// static int BFS(Graph& graph, int start, int end) {
-//     int numVertices = graph.getNumVertices();
-//     vector<bool> visited(numVertices, false);
-//     vector<int> parent(numVertices, -1);
-//     vector<int> distance(numVertices, -1);
-//     queue<int> q;
-//     q.push(start);
-//     visited[start] = true;
-//     distance[start] = 0;
-//     while (!q.empty()) {
-//         int vertex = q.front();
-//         q.pop();
-//         for (int neighbor : graph.getNeighbors(vertex)) {
-//             if (!visited[neighbor]) {
-//                 visited[neighbor] = true;
-//                 parent[neighbor] = vertex;
-//                 distance[neighbor] = distance[vertex] + 1;
-//                 q.push(neighbor);
-//             }
-//         }
-//     }
-//     if (distance[end] == -1) {
-//         return -1; // There is no path between the two vertices
-//     }
-//     return distance[end];
-// }
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
@@ -417,18 +404,17 @@ Convert the graph to a double sided graph, if the graph can't be divided return 
 @param graph - the graph to check if it can be divided to two sets.
 @return print the two sets if the graph can be divided, otherwise return 0.
 */          
-int Algorithms::isBipartite(Graph &graph){
+string Algorithms::isBipartite(Graph &graph){
     unsigned int numVertices = graph.getNumVertices();
     vector<int> color(numVertices, 0); // 0 - white, 1 - red, 2 - blue
-    vector<unsigned int> pi(numVertices, NULL);
+    vector<unsigned int> pi(numVertices, NO_PARENT);
     stack<unsigned int> path;
 
     for (unsigned int i = 0; i < numVertices; i++){
         if (color[i] == 0){
             color[i] = 1;
             if (DFSVisitBipartite(graph, i, color, pi) == 0){
-                cout << "The graph is not bipartite." << endl;
-                return 0;
+                return "0";
             }
         }
     }
@@ -444,21 +430,22 @@ int Algorithms::isBipartite(Graph &graph){
         }
     }
 
-    cout << "The graph is bipartite: A={";
+    string result = "The graph is bipartite: A={";
     for (unsigned int i = 0; i < setA.size(); i++){
-        cout << setA[i];
+        result += to_string(setA[i]);
         if (i != setA.size() - 1){
-            cout << ", ";
+            result += ", ";
         }
     }
-    cout << "}, B={";
+    result += "}, B={";
     for (unsigned int i = 0; i < setB.size(); i++){
-        cout << setB[i];
+        result += to_string(setB[i]);
         if (i != setB.size() - 1){
-            cout << ", ";
+            result += ", ";
         }
     }
-    cout << "}." << endl;
+    result += "}";
+    return result;
 }
 
 /*
@@ -486,19 +473,18 @@ Print the negative cycle in the graph if there is one, otherwise print "No negat
 @param graph - the graph to check if there is a negative cycle in it.
 @return print the negative cycle if there is one, otherwise print "No negative cycle".
 */
-int Algorithms::negativeCycle(Graph graph){
+string Algorithms::negativeCycle(Graph graph){
+    string result;
     if (!graph.isWeightedGraph()) {
-        cout << "The graph is not weighted so there are no negative cycles." << endl;
-        return 0;
+        return "No negative cycle found.";
     }
     if (graph.isPositiveWeightedGraph()) {
-        cout << "The graph is positive weighted so there are no negative cycles." << endl;
-        return 0;
+        return "No negative cycle found.";
     }
 
     // Find negative cycle using Floyd-Warshall algorithm
     vector<vector<int>> dist(graph.getNumVertices(), vector<int>(graph.getNumVertices(), INT_MAX));
-    vector<vector<int>> next(graph.getNumVertices(), vector<int>(graph.getNumVertices(), -1));
+    vector<vector<unsigned int>> next(graph.getNumVertices(), vector<unsigned int>(graph.getNumVertices(), NO_PARENT));
 
     // Initialize distance matrix and next matrix
     for (unsigned int i = 0; i < graph.getNumVertices(); i++) {
@@ -524,19 +510,17 @@ int Algorithms::negativeCycle(Graph graph){
     // Check for negative cycle
     for (unsigned int i = 0; i < graph.getNumVertices(); i++) {
         if (dist[i][i] < 0) {
-            cout << "The negative cycle is: ";
             unsigned int vertex = i;
             do {
-                cout << vertex << " -> ";
+                result += std::to_string(vertex) + "->";
                 vertex = next[vertex][i];
             } while (vertex != i);
-            cout << vertex << endl;
-            return 0;
+            result += std::to_string(vertex);
+            return result;
         }
     }
 
-    cout << "No negative cycle found." << endl;
+    return "No negative cycle found.";
 }
 
-//};
 }
