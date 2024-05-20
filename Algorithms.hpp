@@ -33,11 +33,11 @@ static int isStronglyConnected( Graph &graph);
 /*
 Print the cycle in the graph if there is one, otherwise return 0.
 */
-static int isContainsCycle( Graph &graph);
+static string isContainsCycle( Graph &graph);
 
-static int isContainsCycleUndirected( Graph &graph);
+static string isContainsCycleUndirected( Graph &graph);
 
-static int isContainsCycleDirected( Graph &graph);
+static string isContainsCycleDirected( Graph &graph);
 
 static int DFSVisit( Graph &graph, unsigned int u, vector<int>& color, vector<unsigned int>& pi, stack<unsigned int>& path);
 
@@ -48,27 +48,27 @@ Calculate the cheapest path between two vertices, if the graph is not weighted r
 if there is no path return -1.
 */
 
-static int shortestPath( Graph &graph, unsigned int start, unsigned int end);
+static string shortestPath( Graph &graph, unsigned int start, unsigned int end);
 
-static int BFS( Graph &graph, unsigned int start, unsigned int end);
+static string BFS( Graph &graph, unsigned int start, unsigned int end);
 
-static int Dijkstra( Graph &graph, unsigned int start, unsigned int end);
+static string Dijkstra( Graph &graph, unsigned int start, unsigned int end);
 
-static int BellmanFord( Graph &graph, unsigned int start, unsigned int end);
+static string BellmanFord( Graph &graph, unsigned int start, unsigned int end);
 
-static int minDistance(vector<int> d, vector<bool> visited);
+static unsigned int minDistance(vector<int> d, vector<bool> visited);
 
 /*
 Convert the graph to a double sided graph, if the graph can't be divided return 0.
 */          
-static int isBipartite( Graph &graph);
+static string isBipartite( Graph &graph);
 
 static int DFSVisitBipartite( Graph &graph, unsigned int u, vector<int>& color, vector<unsigned int>& pi);
 
 /*
 Print the negative cycle in the graph if there is one, otherwise print "No negative cycle".
 */
-static int negativeCycle(Graph graph);
+static string negativeCycle(Graph graph);
 
 
 
