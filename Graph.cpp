@@ -117,7 +117,7 @@ namespace ariel {
     /*
     Get the number of vertices in the graph.
     */
-    int Graph::getNumVertices() {
+    unsigned int Graph::getNumVertices() {
         return numVertices;
     }
 
