@@ -31,7 +31,7 @@ namespace ariel {
 
         vector<vector<int>> getAdjacencyMatrix();
        
-        int getNumVertices();
+        unsigned int getNumVertices();
 
         vector<size_t> getNeighbors(size_t vertex);
 
